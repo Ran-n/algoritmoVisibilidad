@@ -1,1 +1,1 @@
-# exercicio_java1
+# Algoritmo de Visibilidad

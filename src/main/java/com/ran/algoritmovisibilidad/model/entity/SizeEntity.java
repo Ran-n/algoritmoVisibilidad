@@ -40,6 +40,9 @@ public class SizeEntity {
         this.product = product;
     }
     
+    public Boolean getBackSoon() {
+        return backSoon;
+    }
     public Boolean isBackSoon() {
         return backSoon;
     }
@@ -47,6 +50,9 @@ public class SizeEntity {
         this.backSoon = backSoon;
     }
     
+    public Boolean getSpecial() {
+        return special;
+    }
     public Boolean isSpecial() {
         return special;
     }

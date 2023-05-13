@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +12,13 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
-public class CSVUtils {
+public class CsvUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(CSVUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(CsvUtils.class);
 
-    public static <T> ArrayList<T> readCSV(final String filePath, final Class<T> clazz) {
-        ArrayList<T> mappedCSV = new ArrayList<>();
+    public static <T> List<T> readCSV(final String filePath, final Class<T> clazz) {
+        logger.info("Reading the csv file {}", filePath);
+        List<T> mappedCSV = new ArrayList<>();
 
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] line;
@@ -30,12 +32,8 @@ public class CSVUtils {
                     }
                 }
             }
-        } catch (CsvValidationException e) {
-            // Handle file reading exception
-            logger.error("Validating the csv file {}.\nError type {}", filePath, e);
-            e.printStackTrace();
-        } catch (IOException e) {
-            logger.error("Reading the csv file {}.\nError type {}", filePath, e);
+        } catch (CsvValidationException | IOException e) {
+            logger.error("While processing the csv file {}: {}", filePath, e.getMessage());
             e.printStackTrace();
         }
         return mappedCSV;
@@ -46,6 +44,7 @@ public class CSVUtils {
             Constructor<T> constructor = clazz.getConstructor(String.class);
             return constructor.newInstance(line);
         } catch (Exception e) {
+            logger.error("While creating the object {} from the line {}: {}", clazz.getName(), line, e.getMessage());
             e.printStackTrace();
         }
         return null;

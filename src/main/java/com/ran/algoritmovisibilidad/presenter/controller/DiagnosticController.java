@@ -1,4 +1,4 @@
-package com.ran.algoritmovisibilidad.controller;
+package com.ran.algoritmovisibilidad.presenter.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

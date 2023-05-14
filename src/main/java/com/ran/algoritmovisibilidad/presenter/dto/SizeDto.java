@@ -33,11 +33,17 @@ public class SizeDto {
     public Boolean getBackSoon() {
         return backSoon;
     }
+    public Boolean isBackSoon() {
+        return backSoon;
+    }
     public void setBackSoon(Boolean backSoon) {
         this.backSoon = backSoon;
     }
     
     public Boolean getSpecial() {
+        return special;
+    }
+    public Boolean isSpecial() {
         return special;
     }
     public void setSpecial(Boolean special) {

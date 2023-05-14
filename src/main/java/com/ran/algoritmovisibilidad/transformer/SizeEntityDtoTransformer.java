@@ -45,8 +45,7 @@ public class SizeEntityDtoTransformer implements EntityDtoTransformer<SizeEntity
         if (dtos == null) return null;
         else if (dtos.isEmpty()) return Collections.emptyList();
 
-        return dtos
-                .stream()
+        return dtos.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
     }
@@ -56,8 +55,7 @@ public class SizeEntityDtoTransformer implements EntityDtoTransformer<SizeEntity
         if (entities == null) return null;
         else if (entities.isEmpty()) return Collections.emptyList();
 
-        return entities
-                .stream()
+        return entities.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }

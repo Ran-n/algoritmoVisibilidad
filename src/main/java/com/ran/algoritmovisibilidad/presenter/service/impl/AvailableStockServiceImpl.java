@@ -1,8 +1,9 @@
 package com.ran.algoritmovisibilidad.presenter.service.impl;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class AvailableStockServiceImpl implements AvailableStockService {
     
         // FIRST SCENARIO
         // get the products that are strictly regular
-        List<ProductDto> strictlyRegularProducts = productService.getStrictlyRegular();
+        Set<ProductDto> strictlyRegularProducts = new HashSet<>(productService.getStrictlyRegular());
     
         // check if any product has stock or is backSoon (only one is needed to be visible)
         // coded like: remove a product if its both out of stock and not back soon
@@ -43,30 +44,25 @@ public class AvailableStockServiceImpl implements AvailableStockService {
                 !productService.hasStock(product.getId())
                 && !productService.isBackSoon(product.getId())
         );
-
+    
         // SECOND SCENARIO
         // get the groups of special and regular products that are stocked or backSoon
-        List<ProductDto> special = productService.getSpecialStockedOrBackSoon();
-        List<ProductDto> regular = productService.getRegularStockedOrBackSoon();
+        Set<ProductDto> special = new HashSet<>(productService.getSpecialStockedOrBackSoon());
+        Set<Long> regularIds = productService.getRegularStockedOrBackSoon().stream()
+                .map(ProductDto::getId)
+                .collect(Collectors.toSet());
     
         // calculate the intersection using group theory
-        List<ProductDto> intersection = special.stream()
-                .filter(specialProduct -> regular.stream()
-                        .anyMatch(regularProduct -> regularProduct.getId().equals(specialProduct.getId())))
-                .collect(Collectors.toList());
-
-        // if a product is in the inserction list, then it complies with the second scenario
-        // because it has a size regular and special with either stock or backSoon
-
+        Set<ProductDto> intersection = special.stream()
+                .filter(specialProduct -> regularIds.contains(specialProduct.getId()))
+                .collect(Collectors.toSet());
+    
         // combine both scenarios
         // coded like: combine strictlyRegularProducts and intersection without duplicates
-        List<ProductDto> visibleProducts = new ArrayList<>(strictlyRegularProducts);
-        visibleProducts.addAll(intersection);
-        
-        visibleProducts = visibleProducts.stream()
-                .collect(Collectors.toMap(ProductDto::getId, product -> product, (p1, p2) -> p1))
-                .values()
-                .stream()
+        strictlyRegularProducts.addAll(intersection);
+    
+        // Sort and return result
+        List<ProductDto> visibleProducts = strictlyRegularProducts.stream()
                 .sorted(Comparator.comparing(ProductDto::getSequence))
                 .collect(Collectors.toList());
     

@@ -37,13 +37,15 @@ public class AvailableStockServiceImpl implements AvailableStockService {
         // FIRST SCENARIO
         // get the products that are strictly regular
         Set<ProductDto> strictlyRegularProducts = new HashSet<>(productService.getStrictlyRegular());
-    
-        // check if any product has stock or is backSoon (only one is needed to be visible)
-        // coded like: remove a product if its both out of stock and not back soon
-        strictlyRegularProducts.removeIf(product ->
-                !productService.hasStock(product.getId())
-                && !productService.isBackSoon(product.getId())
-        );
+        
+        if (strictlyRegularProducts.size() > 0) {
+                // check if any product has stock or is backSoon (only one is needed to be visible)
+                // coded like: remove a product if its both out of stock and not back soon
+                strictlyRegularProducts.removeIf(product ->
+                        !productService.hasStock(product.getId())
+                        && !productService.isBackSoon(product.getId())
+                );
+        }
     
         // SECOND SCENARIO
         // get the groups of special and regular products that are stocked or backSoon
@@ -51,11 +53,13 @@ public class AvailableStockServiceImpl implements AvailableStockService {
         Set<Long> regularIds = productService.getRegularStockedOrBackSoon().stream()
                 .map(ProductDto::getId)
                 .collect(Collectors.toSet());
-    
-        // calculate the intersection using group theory
-        Set<ProductDto> intersection = special.stream()
-                .filter(specialProduct -> regularIds.contains(specialProduct.getId()))
-                .collect(Collectors.toSet());
+        Set<ProductDto> intersection = new HashSet<>();
+        if (special.size() > 0 && regularIds.size() > 0) {
+                // calculate the intersection using group theory
+                intersection = special.stream()
+                        .filter(specialProduct -> regularIds.contains(specialProduct.getId()))
+                        .collect(Collectors.toSet());
+        }
     
         // combine both scenarios
         // coded like: combine strictlyRegularProducts and intersection without duplicates
